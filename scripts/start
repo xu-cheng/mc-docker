@@ -2,8 +2,10 @@
 
 function start_minecraft()
 {
+    [[ -d /data/runtime ]] || mkdir -p /data/runtime
+    [[ -f /data/runtime/eula.txt ]] || echo "eula=true" > /data/runtime/eula.txt
     cd /data/runtime || exit 1
-    exec java -server -Xms128M -jar /data/runtime/minecraft_server.jar nogui
+    exec java -server -Xms128M -jar /minecraft/minecraft_server.jar nogui
 }
 
 if [[ -f /data/runtime/server.properties ]]; then

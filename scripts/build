@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-mkdir -p /data/runtime
-curl https://s3.amazonaws.com/Minecraft.Download/versions/1.10.2/minecraft_server.1.10.2.jar \
-     -L -o /data/runtime/minecraft_server.jar
-echo "eula=true" > /data/runtime/eula.txt
+# Download Minecraft
+MINECRAFT_VERSION="1.10.2"
 
+mkdir -p /minecraft
+curl https://s3.amazonaws.com/Minecraft.Download/versions/$MINECRAFT_VERSION/minecraft_server.$MINECRAFT_VERSION.jar \
+     -L -o /minecraft/minecraft_server-"$MINECRAFT_VERSION".jar
+ln -sf /minecraft/minecraft_server-"$MINECRAFT_VERSION".jar /minecraft/minecraft_server.jar
+
+# Setup backup
 mkdir -p /data/backup/log
 mkdir -p /data/backup/stage
 mkdir -p /data/backup/archives
