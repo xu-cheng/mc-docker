@@ -9,15 +9,16 @@ function start_minecraft()
 if [[ -f /data/runtime/server.properties ]]; then
     start_minecraft
 else
-    start_minecraft &
-    pid=$!
-    sleep 10
+    echo "stop" | start_minecraft
     MCRCON_PASS="$(ruby -rsecurerandom -e 'puts SecureRandom.hex(20)')"
-    sed -i 's/white-list=.*/white-list=true/g' /data/runtime/server.properties
-    sed -i 's/enable-rcon=.*/enable-rcon=true/g' /data/runtime/server.properties
-    echo "rcon.password=$MCRCON_PASS" >> /data/runtime/server.properties
-    /scripts/mcrcon -p "$MCRCON_PASS" "op xucheng"
-    kill -9 "$pid"
+    sed -i '/white-list=.*/d' /data/runtime/server.properties
+    sed -i '/enable-rcon=.*/d' /data/runtime/server.properties
+    tee -a /data/runtime/server.properties >/dev/null <<EOS
+white-list=true
+enable-rcon=true
+rcon.password=$MCRCON_PASS
+EOS
+    (sleep 10; /scripts/mcrcon -p "$MCRCON_PASS" "op xucheng") &
     start_minecraft
 fi
 

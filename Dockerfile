@@ -7,6 +7,6 @@ ADD ./scripts /scripts
 RUN chmod +x /scripts/*
 RUN /scripts/build
 
-EXPOSE 25565
+EXPOSE 25565 25575
 VOLUME ["/data"]
 CMD    ["/scripts/start"]
