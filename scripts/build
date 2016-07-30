@@ -2,16 +2,12 @@
 
 # Download Minecraft
 MINECRAFT_VERSION="1.10.2"
-
 mkdir -p /minecraft
 curl https://s3.amazonaws.com/Minecraft.Download/versions/$MINECRAFT_VERSION/minecraft_server.$MINECRAFT_VERSION.jar \
      -L -o /minecraft/minecraft_server-"$MINECRAFT_VERSION".jar
 ln -sf /minecraft/minecraft_server-"$MINECRAFT_VERSION".jar /minecraft/minecraft_server.jar
 
 # Setup backup
-mkdir -p /data/backup/log
-mkdir -p /data/backup/stage
-mkdir -p /data/backup/archives
 crontab - <<EOS
-0 0 * * * /scripts/backup >> /data/backup/log/backup.log 2>&1
+0 0 * * * mkdir -p /data/backup/log; /scripts/backup >> /data/backup/log/backup.log 2>&1
 EOS
