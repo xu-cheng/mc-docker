@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require "fileutils"
+require "pathname"
+require "shellwords"
+require "time"
+include FileUtils::Verbose
+
+class Pathname
+  alias_method :/, :+ unless method_defined?(:/)
+  alias_method :to_str, :to_s unless method_defined?(:to_str)
+end
+
+def system(*args)
+  puts args.shelljoin.gsub(MCRCON_PASSWORD, "<token>")
+  super
+end
+
+def lock(path)
+  file = Pathname.new(path).open(File::RDWR | File::CREAT)
+  unless file.flock(File::LOCK_EX | File::LOCK_NB)
+    raise "Failed to lock #{path}"
+  end
+end
+
+RUNTIME_PATH = Pathname.new "/data/runtime/"
+BACKUP_PATH = Pathname.new "/data/backup/"
+STAGE_PATH = BACKUP_PATH/"stage"
+ARCHIVES_PATH = BACKUP_PATH/"archives"
+MCRCON = Pathname.new "/scripts/mcrcon"
+MCRCON_PASSWORD = (RUNTIME_PATH/"server.properties").read[/^rcon\.password=(.*)$/, 1]
+
+lock "/tmp/minecraft-backup.lock"
+
+mkdir_p STAGE_PATH
+mkdir_p ARCHIVES_PATH
+
+system MCRCON, "-p", MCRCON_PASSWORD, 'tellraw @a {"text":"[Server] Backup started.","color":"blue","bold":true}'
+system "rsync", "-avcr", "--delete", "--exclude", "logs", RUNTIME_PATH, STAGE_PATH
+cd(STAGE_PATH) do
+  system "tar", "-czvf", ARCHIVES_PATH/"#{Time.now.iso8601}.tar.gz", "."
+end
+system "find", ARCHIVES_PATH, "-mtime", "+3", "-type", "f", "-print", "-delete"
+system MCRCON, "-p", MCRCON_PASSWORD, 'tellraw @a {"text":"[Server] Backup done.","color":"blue","bold":true}'

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+mkdir -p /data/runtime
+curl https://s3.amazonaws.com/Minecraft.Download/versions/1.10.2/minecraft_server.1.10.2.jar \
+     -L -o /data/runtime/minecraft_server.jar
+echo "eula=true" > /data/runtime/eula.txt
+
+mkdir -p /data/backup/log
+mkdir -p /data/backup/stage
+mkdir -p /data/backup/archives
+crontab <<EOS
+0 0 * * * /scripts/backup >> /data/backup/log/backup.log 2>&1
+EOS
