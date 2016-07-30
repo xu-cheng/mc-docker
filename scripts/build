@@ -8,6 +8,6 @@ echo "eula=true" > /data/runtime/eula.txt
 mkdir -p /data/backup/log
 mkdir -p /data/backup/stage
 mkdir -p /data/backup/archives
-crontab <<EOS
+crontab - <<EOS
 0 0 * * * /scripts/backup >> /data/backup/log/backup.log 2>&1
 EOS
