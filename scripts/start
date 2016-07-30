@@ -13,8 +13,9 @@ if [[ -f /data/runtime/server.properties ]]; then
 else
     echo "stop" | start_minecraft
     MCRCON_PASS="$(ruby -rsecurerandom -e 'puts SecureRandom.hex(20)')"
-    sed -i '/white-list=.*/d' /data/runtime/server.properties
-    sed -i '/enable-rcon=.*/d' /data/runtime/server.properties
+    sed -i.bak '/white-list=.*/d' /data/runtime/server.properties
+    sed -i.bak '/enable-rcon=.*/d' /data/runtime/server.properties
+    rm /data/runtime/server.properties.bak
     tee -a /data/runtime/server.properties >/dev/null <<EOS
 white-list=true
 enable-rcon=true
