@@ -21,7 +21,13 @@ white-list=true
 enable-rcon=true
 rcon.password=$MCRCON_PASS
 EOS
-    (sleep 10; /scripts/mcrcon -p "$MCRCON_PASS" "op xucheng") &
+    (
+        sleep 20
+        while read -r name; do
+            [[ -n "$name" ]] || continue
+            /scripts/mcrcon -p "$MCRCON_PASS" "op $name"
+        done < /minecraft/ops.txt
+    ) &
     start_minecraft
 fi
 
