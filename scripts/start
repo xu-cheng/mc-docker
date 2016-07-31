@@ -2,11 +2,18 @@
 
 function start_minecraft()
 {
-    [[ -d /data/runtime ]] || mkdir -p /data/runtime
     [[ -f /data/runtime/eula.txt ]] || echo "eula=true" > /data/runtime/eula.txt
     cd /data/runtime || exit 1
     exec java -server -Xms256M -jar /minecraft/minecraft_server.jar nogui
 }
+
+mkdir -p /data/runtime
+# make it easier to update runtime folder inside docker.
+if [[ -d /data/runtime_update ]]; then
+    [[ ! -d /data/runtime_backup ]] || rm -rf /data/runtime_backup
+    mv /data/runtime /data/runtime_backup
+    mv /data/runtime_update /data/runtime
+fi
 
 if [[ -f /data/runtime/server.properties ]]; then
     start_minecraft
