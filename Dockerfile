@@ -1,7 +1,8 @@
-FROM centos:centos7
+FROM i386/java:8-jre
 MAINTAINER Xu Cheng <xucheng@me.com>
 
-RUN yum install -y cronie ruby java-1.8.0-openjdk
+RUN apt-get update && apt-get install -y cron ruby \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD ./scripts /scripts
 RUN chmod +x /scripts/*
