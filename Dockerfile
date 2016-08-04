@@ -1,7 +1,7 @@
 FROM i386/java:8-jre
 MAINTAINER Xu Cheng <xucheng@me.com>
 
-RUN apt-get update && apt-get install -y cron ruby \
+RUN apt-get update && apt-get install -y cron rsync ruby \
     && rm -rf /var/lib/apt/lists/*
 
 ADD ./scripts /scripts
